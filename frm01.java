@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.Date;
 
 /**
  *
@@ -42,7 +43,15 @@ public class frm01 extends javax.swing.JFrame {
         cboPRODI.addItem(txprodi[2]);
         cboPRODI.addItem(txprodi[3]);
         cboPRODI.addItem(txprodi[4]);
-        cboPRODI.setSelectedIndex(0);                
+        cboPRODI.setSelectedIndex(0);  
+        cboPRODI.setVisible(false);
+        
+        cboJK.removeAllItems();
+        cboJK.addItem("Pilih Jenis Kelamin");
+        cboJK.addItem("Laki-Laki");
+        cboJK.addItem("Perempuan");
+        cboJK.setSelectedIndex(0);
+        cboJK.setVisible(false);
     }
     private void ListDataMahasiswa() throws SQLException{
         Connection cnn = koneksi();
@@ -81,7 +90,7 @@ public class frm01 extends javax.swing.JFrame {
         tbmhs = new javax.swing.JTable();
         jSeparator1 = new javax.swing.JSeparator();
         cmdTutup = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cmdDataBaru = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txNIM = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -94,6 +103,7 @@ public class frm01 extends javax.swing.JFrame {
         txJK = new javax.swing.JTextField();
         cboJK = new javax.swing.JComboBox<>();
         txTGLAHIR = new javax.swing.JTextField();
+        lbTest = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -122,7 +132,12 @@ public class frm01 extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Data Baru");
+        cmdDataBaru.setText("Data Baru");
+        cmdDataBaru.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDataBaruActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("NIM");
 
@@ -146,6 +161,8 @@ public class frm01 extends javax.swing.JFrame {
 
         txTGLAHIR.setText("jTextField5");
 
+        lbTest.setText("jLabel7");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -168,7 +185,7 @@ public class frm01 extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(cmdTutup, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(cmdDataBaru, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel2)
@@ -197,6 +214,10 @@ public class frm01 extends javax.swing.JFrame {
                                                 .addComponent(cboJK, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addComponent(txTGLAHIR, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(lbTest)
+                .addGap(394, 394, 394))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,7 +231,7 @@ public class frm01 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdTutup, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmdDataBaru, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -233,7 +254,9 @@ public class frm01 extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(txTGLAHIR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addComponent(lbTest)
+                .addGap(45, 45, 45))
         );
 
         pack();
@@ -255,6 +278,67 @@ public class frm01 extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_cmdTutupActionPerformed
+    
+    private void clearForm(){
+        txNIM.setText("");
+        txNAMA.setText("");
+        txTGLAHIR.setText("");
+    }
+    private void StoreData() throws SQLException{
+        String nim = txNIM.getText();
+        String nama = txNAMA.getText();
+        String tgllahir = txTGLAHIR.getText();
+        String prodi = String.valueOf( cboPRODI.getSelectedItem() );
+        String jk = String.valueOf( cboJK.getSelectedItem());
+        String jkx = "0";
+        if(jk.equals("Perempuan")){
+            jkx = "1";
+        }
+        
+        Connection cnn = koneksi();
+        if(! cnn.isClosed() ){
+            PreparedStatement PS = cnn.prepareStatement("INSERT INTO mahasiswa(NIM,NAMA,PRODI,JENISKELAMIN,TGLLAHIR) VALUES(?,?,?,?,?)");
+            PS.setString(1, nim);
+            PS.setString(2, nama);
+            PS.setString(3, prodi);
+            PS.setString(4, jkx);
+            PS.setDate(5, java.sql.Date.valueOf(tgllahir));
+            PS.executeUpdate();
+            
+            cnn.close();
+            
+        }
+        
+        
+                
+    }
+    private void cmdDataBaruActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDataBaruActionPerformed
+        
+        if(cmdDataBaru.getText().equals("Data Baru")){
+            cmdDataBaru.setText("Simpan Data");
+            cboPRODI.setVisible(true);
+            txPRODI.setVisible(false);
+            cboJK.setVisible(true);
+            txJK.setVisible(false);
+            clearForm();
+        }else{
+            cmdDataBaru.setText("Data Baru");
+            cboPRODI.setVisible(false);
+            txPRODI.setVisible(true);
+            cboJK.setVisible(false);
+            txJK.setVisible(true);
+            
+            try {
+                StoreData();
+                ListDataMahasiswa();
+            } catch (SQLException ex) {
+                Logger.getLogger(frm01.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            clearForm();
+            
+        }
+        
+    }//GEN-LAST:event_cmdDataBaruActionPerformed
 
     /**
      * @param args the command line arguments
@@ -298,8 +382,8 @@ public class frm01 extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboJK;
     private javax.swing.JComboBox<String> cboPRODI;
+    private javax.swing.JButton cmdDataBaru;
     private javax.swing.JButton cmdTutup;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -308,6 +392,7 @@ public class frm01 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lbTest;
     private javax.swing.JTable tbmhs;
     private javax.swing.JTextField txJK;
     private javax.swing.JTextField txNAMA;
