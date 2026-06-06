@@ -113,6 +113,7 @@ public class frm01 extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         cmdHapus = new javax.swing.JButton();
+        cmdUpdate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -198,6 +199,14 @@ public class frm01 extends javax.swing.JFrame {
             }
         });
 
+        cmdUpdate.setText("Simpan Data");
+        cmdUpdate.setEnabled(false);
+        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -232,6 +241,8 @@ public class frm01 extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(cmdDataBaru, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cmdUpdate)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(cmdHapus))
                                     .addComponent(txNIM, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
@@ -264,7 +275,7 @@ public class frm01 extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cmdDataBaru, cmdHapus});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cmdDataBaru, cmdHapus, cmdUpdate});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,7 +290,8 @@ public class frm01 extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdTutup, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdDataBaru, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdHapus))
+                    .addComponent(cmdHapus)
+                    .addComponent(cmdUpdate))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txNIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -319,7 +331,7 @@ public class frm01 extends javax.swing.JFrame {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cmdDataBaru, cmdHapus});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cmdDataBaru, cmdHapus, cmdUpdate});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -441,7 +453,10 @@ public class frm01 extends javax.swing.JFrame {
         txJK.setText(jkx);
         txALAMAT.setText(alamat);
         txEMAIL.setText(email);
-        txNOTELP.setText(notelp);    
+        txNOTELP.setText(notelp);   
+        
+        cmdUpdate.setEnabled(true);
+        cmdUpdate.setText("Ubah Data");
     }//GEN-LAST:event_tbmhsMouseClicked
 
     private void cmdHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdHapusActionPerformed
@@ -461,6 +476,30 @@ public class frm01 extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_cmdHapusActionPerformed
+
+    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
+        if(cmdUpdate.getText().equals("Ubah Data")){
+            cmdUpdate.setText("Simpan Data");
+            cboPRODI.setVisible(true);
+            cboJK.setVisible(true);
+            txPRODI.setVisible(false);
+            txJK.setVisible(false);
+        }else{
+            cmdUpdate.setText("Ubah Data");
+            cboPRODI.setVisible(false);
+            cboJK.setVisible(false);
+            txPRODI.setVisible(true);
+            txJK.setVisible(true);
+            
+            try {
+                UpdateData();
+                ListDataMahasiswa();
+            } catch (SQLException ex) {
+                Logger.getLogger(frm01.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+    }//GEN-LAST:event_cmdUpdateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -507,6 +546,7 @@ public class frm01 extends javax.swing.JFrame {
     private javax.swing.JButton cmdDataBaru;
     private javax.swing.JButton cmdHapus;
     private javax.swing.JButton cmdTutup;
+    private javax.swing.JButton cmdUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -530,4 +570,31 @@ public class frm01 extends javax.swing.JFrame {
     private javax.swing.JTextField txPRODI;
     private javax.swing.JTextField txTGLAHIR;
     // End of variables declaration//GEN-END:variables
+
+    private void UpdateData() throws SQLException {
+        String nim = txNIM.getText();
+        String nama = txNAMA.getText();
+        String tgllahir = txTGLAHIR.getText();
+        String prodi = String.valueOf( cboPRODI.getSelectedItem() );
+        String jk = String.valueOf( cboJK.getSelectedItem());
+        String jkx = "0";
+        if(jk.equals("Perempuan")){
+            jkx = "1";
+        }
+        
+        Connection cnn = koneksi();
+        if(! cnn.isClosed() ){
+            PreparedStatement PS = cnn.prepareStatement
+        ("UPDATE mahasiswa SET NAMA=?,PRODI=?,JENISKELAMIN=?, TGLLAHIR=? WHERE NIM=?");
+            PS.setString(1, nama);
+            PS.setString(2, prodi);
+            PS.setString(3, jkx);
+            PS.setDate(4, java.sql.Date.valueOf(tgllahir));
+            PS.setString(5, nim);
+            PS.executeUpdate();
+            
+            cnn.close();
+            
+        }
+    }
 }
